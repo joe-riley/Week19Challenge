@@ -27,6 +27,14 @@ const saveRecord = record => {
   budgetObjectStore.add(record);
 }
 
+const saveRecords = () => {
+  if (transactions.length > 0) {
+    for (transaction in transactions) {
+      saveRecord(transaction);
+    }
+  }
+}
+
 const uploadRecord = () => {
   const transaction = db.transaction(['transactions'], 'readwrite');
 
@@ -64,4 +72,6 @@ const uploadRecord = () => {
   }
 };
 
+
 window.addEventListener('online', uploadRecord);
+

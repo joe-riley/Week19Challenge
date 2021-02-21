@@ -49,7 +49,7 @@
     (async () => {
       if ('serviceWorker' in navigator) {
         try {
-          const worker = navigator.serviceWorker.register('./service-worker.js');
+          const worker = await navigator.serviceWorker.register('./service-worker.js');
           console.log('Service Worker registered.');
         } catch (err) {
             console.log('Service Worker registration failed:', err)
