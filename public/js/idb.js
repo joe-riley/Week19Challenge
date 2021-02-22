@@ -72,6 +72,5 @@ const uploadRecord = () => {
   }
 };
 
-
 window.addEventListener('online', uploadRecord);
 

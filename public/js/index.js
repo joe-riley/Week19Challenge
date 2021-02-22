@@ -9,18 +9,6 @@ fetch("/api/transaction")
     // save db data on global variable
     transactions = data;
 
-    // for (let db_transaction in data) {
-    //   for (let local_transaction in transactions) {
-    //     console.log(db_transaction);
-    //     if (db_transaction._id === local_transaction._id) {
-    //       local_transaction = db_transaction;
-    //     } else {
-    //       transactions.push(db_transaction);
-    //     }
-    //   }
-    // }
-    // saveRecords();
-
     populateTotal();
     populateTable();
     populateChart();
