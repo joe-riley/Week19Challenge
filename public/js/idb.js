@@ -37,25 +37,27 @@ const uploadRecord = () => {
   getAll.onsuccess = async () => {
     if (getAll.result.length > 0) {
       try {
-        const response = await fetch('/api/transaction', {
-          method: 'POST',
-          body: JSON.stringify(getAll.result),
-          headers: {
-            Accept: 'application/json, text/plain, */*',
-            'Content-Type': 'application/json',
-          } 
-        });
+        if(getAll.result.length > 0) {
+          const response = await fetch('/api/transaction', {
+            method: 'POST',
+            body: JSON.stringify(getAll.result),
+            headers: {
+              Accept: 'application/json, text/plain, */*',
+              'Content-Type': 'application/json',
+            } 
+          });
 
-        if (response.json().message) {
-          throw new Error(response);
+          if (response.json().message) {
+            throw new Error(response);
+          }
+          // Clear the object store now
+          const trans = db.transaction(['transactions'], 'readwrite');
+          const oldObjectStore = trans.objectStore('transactions');
+          oldObjectStore.clear();
+
+          console.log('All offline transactions have been uploaded.');
         }
 
-        // Clear the object store now
-        const trans = db.transaction(['transactions'], 'readwrite');
-        const oldObjectStore = trans.objectStore('transactions');
-        oldObjectStore.clear();
-
-        console.log('All offline transactions have been uploaded.');
 
       } catch (err) {
         console.log(err);

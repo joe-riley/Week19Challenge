@@ -78,16 +78,10 @@ self.addEventListener('fetch', evt => {
             // Check if we received a valid response
             if(!response || response.status !== 200 || response.type !== 'basic') {
               return response;
-            }
-
-            var responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                cache.put(evt.request, responseToCache);
-              });
-
-            return response;
+            } else {
+              console.log('File is not cached, fetching: ' + evt.request.url);
+              return fetch(evt.request);
+            }       
           }
         )
         .catch(err => console.log(err));
