@@ -59,7 +59,8 @@ self.addEventListener('fetch', evt => {
         return req;
       } else {
         console.log('File is not cached, fetching: ' + evt.request.url);
-        return await fetch(evt.request);
+        const response = fetch(evt.request).then(response => response);
+        return response;
       }
     })  
   )
