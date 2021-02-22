@@ -59,7 +59,7 @@ self.addEventListener('fetch', evt => {
         return req;
       } else {
         console.log('File is not cached, fetching: ' + evt.request.url);
-        return fetch(evt.request);
+        return await fetch(evt.request);
       }
     })  
   )
