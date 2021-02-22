@@ -20,50 +20,77 @@ const FILES_TO_CACHE = [
   'index.html',
 ];
 
-// Install the service worker
-self.addEventListener('install', evt => {
+// install
+self.addEventListener("install", function (evt) {
   evt.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log('Files are pre-cached succesfully!');
-      return cache.addAll(FILES_TO_CACHE);
-    })
-  )
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log("Your files were pre-cached successfully!");
+        cache
+          .addAll(FILES_TO_CACHE)
+          .then((result) => {
+            // debugger;
+            console.log("result of add all", result);
+          })
+          .catch((err) => {
+            // debugger;
+            console.log("Add all error: ", err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  );
 
   self.skipWaiting();
-})
+});
 
-// Activate the service worker and remove old data from the cache
-self.addEventListener('activate', evt => {
+// activate
+self.addEventListener("activate", function (evt) {
   evt.waitUntil(
-    caches.keys().then(keyList => {
+    caches.keys().then((keyList) => {
       return Promise.all(
-        keyList.map(key => {
+        keyList.map((key) => {
           if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
-            console.log('removing old cache data', key);
+            console.log("Removing old cache data", key);
             return caches.delete(key);
           }
         })
-      )
+      );
     })
-  )
-  self.clients.claim();
-})
+  );
 
+  self.clients.claim();
+});
 // Intercept fetch requests
 self.addEventListener('fetch', evt => {
-  console.log('Fetching items from: ' + evt.request.url);
   evt.respondWith(
-    caches.match(evt.request).then(req => {
-      if (req) {
-        console.log('Responding with cache' + evt.request.url);
-        return req;
-      } else {
-        console.log('File is not cached, fetching: ' + evt.request.url);
-        const response = fetch(evt.request).then(response => response);
-        return response;
-      }
-    })  
-  )
+    caches.match(evt.request)
+      .then(function(response) {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
 
-  return;
-})
+        return fetch(evt.request).then(
+          function(response) {
+            // Check if we received a valid response
+            if(!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            var responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(function(cache) {
+                cache.put(evt.request, responseToCache);
+              });
+
+            return response;
+          }
+        )
+        .catch(err => console.log(err));
+      })
+    );
+});

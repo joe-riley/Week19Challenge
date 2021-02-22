@@ -11,7 +11,7 @@ request.onsuccess = e => {
   db = e.target.result;
 
   if(navigator.onLine) {
-
+    uploadRecord();
   }
 };
 
@@ -25,14 +25,6 @@ const saveRecord = record => {
   const budgetObjectStore = transaction.objectStore('transactions');
 
   budgetObjectStore.add(record);
-}
-
-const saveRecords = () => {
-  if (transactions.length > 0) {
-    for (transaction in transactions) {
-      saveRecord(transaction);
-    }
-  }
 }
 
 const uploadRecord = () => {
@@ -73,4 +65,3 @@ const uploadRecord = () => {
 };
 
 window.addEventListener('online', uploadRecord);
-
